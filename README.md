@@ -1,5 +1,5 @@
-<H3>ENTER YOUR NAME</H3>
-<H3>ENTER YOUR REGISTER NO.</H3>
+<H3>NAME : Divakar R</H3>
+<H3>REGISTER NO. 212222240026</H3>
 <H3>EX. NO.3</H3>
 <H3>DATE:</H3>
 <H2 aligh = center> Implementation of MLP for a non-linearly separable data</H2>
@@ -36,11 +36,92 @@ Step 3: Repeat the  iteration  until the losses become constant and  minimum<BR>
 Step 4 : Test for the XOR patterns.
 
 <H3>Program:</H3>
-Insert your code here
+
+```python
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Initialize the input vector and output vector for XOR
+x = np.array([[0, 0, 1, 1], [0, 1, 0, 1]])
+y = np.array([[0, 1, 1, 0]])
+# Initialize the structure of MLP with input, hidden, and output layer
+n_x = 2
+n_y = 1
+n_h = 2
+m = x.shape[1]
+lr = 0.1
+
+# Weight matrix for hidden layer randomly
+w1 = np.random.rand(n_h, n_x)
+w2 = np.random.rand(n_y, n_h)
+losses = []
+
+def sigmoid(z):
+    return 1 / (1 + np.exp(-z))
+
+def sigmoid_derivative(z):
+    return sigmoid(z) * (1 - sigmoid(z))
+
+def forward_prop(w1, w2, x):
+    z1 = np.dot(w1, x)
+    a1 = sigmoid(z1)
+    z2 = np.dot(w2, a1)
+    a2 = sigmoid(z2)
+    return z1, a1, z2, a2
+
+def back_prop(m, w1, w2, z1, a1, z2, a2, y, lr):
+    dz2 = a2 - y
+    dw2 = (1 / m) * np.dot(dz2, a1.T)
+    dz1 = np.dot(w2.T, dz2) * sigmoid_derivative(z1)
+    dw1 = (1 / m) * np.dot(dz1, x.T)
+    w1 -= lr * dw1
+    w2 -= lr * dw2
+    return w1, w2
+
+def train_mlp(w1, w2, x, y, lr, iterations):
+    for i in range(iterations):
+        z1, a1, z2, a2 = forward_prop(w1, w2, x)
+        loss = np.mean(np.square(a2 - y))
+        losses.append(loss)
+        w1, w2 = back_prop(m, w1, w2, z1, a1, z2, a2, y, lr)
+    return w1, w2
+
+def predict(w1, w2, input):
+    _, _, _, a2 = forward_prop(w1, w2, input)
+    return np.round(a2)
+
+# Train the MLP
+iterations = 10000
+w1, w2 = train_mlp(w1, w2, x, y, lr, iterations)
+
+# Plot losses to see how our network is doing
+plt.plot(losses)
+plt.xlabel("EPOCHS")
+plt.ylabel("Loss value")
+plt.show()
+
+# Test the XOR classification
+test_inputs = np.array([[0, 0], [0, 1], [1, 0], [1, 1]])
+for test_input in test_inputs:
+    prediction = predict(w1, w2, test_input.reshape(2, 1))
+    print(f"Input: {test_input} Predicted Output: {prediction}")
+
+```
+
 
 <H3>Output:</H3>
 
-Show your results here
+Plot losses to see how our network is doing
+
+![image](https://github.com/A-Thiyagarajan/Ex-3-NN/assets/118707693/dad8a1a5-f465-44c7-9458-6824fe4cab89)
+
+Test the XOR classification
+
+
+![image](https://github.com/A-Thiyagarajan/Ex-3-NN/assets/118707693/cddd8565-fda1-46e2-b84f-c15eb4ca8ee9)
+
 
 <H3> Result:</H3>
 Thus, XOR classification problem can be solved using MLP in Python 
